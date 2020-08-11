@@ -32,3 +32,7 @@ void UZombieSpawnActorComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	// ...
 }
 
+void UZombieSpawnActorComponent::SpawnZombie()
+{
+}
+
