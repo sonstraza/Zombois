@@ -32,10 +32,12 @@ ABaseZomboiCharacter::ABaseZomboiCharacter()
 	SetMovementStatus(EMovementStatus::EMS_Normal);
 
 	GetCharacterMovement()->JumpZVelocity = 500.f;
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 
 	//Camera
 	BaseTurnRate = 65.f;
 	BaseLookUpRate = 65.f;
+	bUseControllerRotationPitch = true;
 }
 
 // Called when the game starts or when spawned
@@ -119,12 +121,14 @@ void ABaseZomboiCharacter::CrouchDown()
 {
 	bCrouchDown = true;
 	SetMovementStatus(EMovementStatus::EMS_Crouch);
+	Crouch();
 }
 
 void ABaseZomboiCharacter::CrouchUp()
 {
 	bCrouchDown = false;
 	SetMovementStatus(EMovementStatus::EMS_Normal);
+	UnCrouch();
 }
 
 void ABaseZomboiCharacter::ADSDown()

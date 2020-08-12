@@ -27,35 +27,35 @@ public:
 	ABaseZomboiCharacter();
 
 	//Character Components
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components/Camera")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Camera")
 	class UCameraComponent* FirstPersonCamera;
 
 	//Movement Variables
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement/Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
 	float WalkSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement/Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
 	float SprintSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement/Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
 	float ADSWalkSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement/Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
 	float CrouchWalkSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement/Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
 	bool bSprintDown;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement/Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
 	bool bADSDown;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement/Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
 	bool bCrouchDown;
 
 	/**
 	 * \brief Current state of the player's movement.
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement/Enums")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Enums")
 	EMovementStatus MovementStatus;
 
 	//Camera Variables
