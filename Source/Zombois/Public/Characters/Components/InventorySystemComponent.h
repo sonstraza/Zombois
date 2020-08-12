@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "InventorySystemComponent.generated.h"
 
+class AItem;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ZOMBOIS_API UInventorySystemComponent : public UActorComponent
@@ -20,10 +21,10 @@ public:
 	 * \brief Pickupable item that is in the current vicinity of the player.
 	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Items)
-	class AItem* ActiveOverlappingItem;
+	AItem* ActiveOverlappingItem;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Items)
-	class AItem* EquippedItem;
+	AItem* EquippedItem;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Items)
 	TArray<AItem*> Inventory;
@@ -40,4 +41,16 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	FORCEINLINE void SetActiveOverlappingItem(AItem* Item) { ActiveOverlappingItem = Item; }
+
+	UFUNCTION(BlueprintCallable)
+	bool AddItemToInventory(AItem* Item);
+
+	UFUNCTION(BlueprintCallable)
+	bool RemoveItemFromInventory(AItem* Item);
+
+	UFUNCTION(BlueprintCallable)
+	void ClearInventory();
+
+	UFUNCTION(BlueprintCallable)
+	bool EquipItem(AItem* Item, FName SocketName);
 };

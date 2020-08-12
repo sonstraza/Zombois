@@ -3,11 +3,13 @@
 
 #include "Items/Item.h"
 #include "Components/SphereComponent.h"
-#include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Sound/SoundCue.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
+#include "GameFramework/Character.h"
+#include "Characters/Components/InventorySystemComponent.h"
 
 // Sets default values
 AItem::AItem()
@@ -18,16 +20,17 @@ AItem::AItem()
 	BaseCollisionVolume = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionVolume"));
 	RootComponent = BaseCollisionVolume;
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(GetRootComponent());
 
 	IdleParticlesComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("IdleParticlesComponent"));
 	IdleParticlesComponent->SetupAttachment(GetRootComponent());
 
+	bIdleParticleActive = false;
 	bRotate = false;
 	RotationRate = 45.f;
 
-
+	CurrentItemState = EItemState::EIS_Pickup;
 }
 
 // Called when the game starts or when spawned
@@ -37,6 +40,11 @@ void AItem::BeginPlay()
 
 	BaseCollisionVolume->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnOverlapBegin);
 	BaseCollisionVolume->OnComponentEndOverlap.AddDynamic(this, &AItem::OnOverlapEnd);
+
+	if (bIdleParticleActive && IdleParticlesComponent->Template)
+	{
+		IdleParticlesComponent->Activate();
+	}
 }
 
 // Called every frame
@@ -56,6 +64,19 @@ void AItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnOverlapBegin()"));
 
+	if(CurrentItemState == EItemState::EIS_Pickup && OtherActor)
+	{
+		ACharacter* Char = Cast<ACharacter>(OtherActor);
+		if (Char)
+		{
+			UInventorySystemComponent* InventorySys = Cast<UInventorySystemComponent>(Char->FindComponentByClass(UInventorySystemComponent::StaticClass()));
+			if (InventorySys)
+			{
+				InventorySys->SetActiveOverlappingItem(this);
+			}
+		}
+	}
+
 	if (OverlapParticles)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OverlapParticles, GetActorLocation(), FRotator(0.0f), true);
@@ -69,5 +90,18 @@ void AItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 void AItem::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnOverlapEnd()"));
+
+	if (OtherActor)
+	{
+		ACharacter* Char = Cast<ACharacter>(OtherActor);
+		if (Char)
+		{
+			UInventorySystemComponent* InventorySys = Cast<UInventorySystemComponent>(Char->FindComponentByClass(UInventorySystemComponent::StaticClass()));
+			if (InventorySys)
+			{
+				InventorySys->SetActiveOverlappingItem(nullptr);
+			}
+		}
+	}
 }
 

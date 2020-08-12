@@ -6,6 +6,16 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+UENUM(BlueprintType)
+enum class EItemState :uint8
+{
+	EIS_Pickup UMETA(DisplayName = "Pickup"),
+	EIS_Equipped UMETA(DisplayName = "Equipped"),
+	EIS_Inventory UMETA(DisplayName = "Inventory"),
+
+	EIS_MAX UMETA(DisplayName = "DefaultMax")
+};
+
 UCLASS()
 class ZOMBOIS_API AItem : public AActor
 {
@@ -15,28 +25,41 @@ public:
 	// Sets default values for this actor's properties
 	AItem();
 
-	//Base shape collision
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item | Collision")
-		class USphereComponent* BaseCollisionVolume;
+	class USphereComponent* BaseCollisionVolume;
 
-	//Base Mesh Component
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item | Mesh")
-		class UStaticMeshComponent* Mesh;
+	class USkeletalMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Particles")
-		class UParticleSystemComponent* IdleParticlesComponent;
+	class UParticleSystemComponent* IdleParticlesComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Particles")
-		class UParticleSystem* OverlapParticles;
+	bool bIdleParticleActive;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Particles")
+	class UParticleSystem* OverlapParticles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sounds")
-		class USoundCue* OverlapSound;
+	class USoundCue* OverlapSound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | ItemProperties")
-		bool bRotate;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sounds")
+	class USoundCue* OnEquipSound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | ItemProperties")
-		float RotationRate;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sounds")
+	class USoundCue* DropSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Properties")
+	bool bRotate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Properties")
+	float RotationRate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item | Interaction")
+	AController* ItemInstigator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Interaction")
+	EItemState CurrentItemState;
 
 protected:
 	// Called when the game starts or when spawned
@@ -47,8 +70,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-		virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
-		virtual void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	virtual void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	FORCEINLINE void SetInstigator(AController* Inst) { ItemInstigator = Inst; }
 };
