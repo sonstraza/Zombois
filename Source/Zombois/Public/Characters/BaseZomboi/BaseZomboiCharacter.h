@@ -30,40 +30,53 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Camera")
 	class UCameraComponent* FirstPersonCamera;
 
-	//Movement Variables
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
+	//Movement Properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Properties")
 	float WalkSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Properties")
 	float SprintSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Properties")
 	float ADSWalkSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Properties")
 	float CrouchWalkSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Properties")
 	bool bSprintDown;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Properties")
 	bool bADSDown;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Properties")
 	bool bCrouchDown;
 
 	/**
 	 * \brief Current state of the player's movement.
 	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Enums")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Properties")
 	EMovementStatus MovementStatus;
 
-	//Camera Variables
+	//Camera Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Movement")
 	float BaseTurnRate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera Movement")
 	float BaseLookUpRate;
+
+	//Status Properties
+	/**
+	 * \brief The player's current health.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats")
+		float Health;
+
+	/**
+	 * \brief The max health the player can have.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats")
+		float MaxHealth;
 
 protected:
 	// Called when the game starts or when spawned
@@ -100,5 +113,26 @@ public:
 
 	void LookUp(float Input);
 
+	//Status Functions
+	
+	/**
+	 * \brief This decreases the player's health.
+	 * \param Amount The amount of health to take away from player.
+	 */
+	void DecrementHealth(float Amount);
 
+	/**
+	 * \brief This applies damage to the player.
+	 * \param DamageAmount The amount of damage given to player.
+	 * \param DamageEvent
+	 * \param EventInstigator
+	 * \param DamageCauser The damage causing actor to the player.
+	 * \return
+	 */
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	/**
+	 * \brief This starts the death sequence in motion.
+	 */
+	void Die();
 };

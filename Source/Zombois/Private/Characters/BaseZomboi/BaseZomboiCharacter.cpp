@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/BaseZomboi/BaseZomboiCharacter.h"
@@ -173,5 +173,30 @@ void ABaseZomboiCharacter::Turn(float Input)
 void ABaseZomboiCharacter::LookUp(float Input)
 {
 	AddControllerPitchInput(Input * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void ABaseZomboiCharacter::DecrementHealth(float Amount)
+{
+	if (Health - Amount <= 0.f)
+	{
+		Health -= Amount;
+		Die();
+	}
+	else
+	{
+		Health -= Amount;
+	}
+}
+
+float ABaseZomboiCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	DecrementHealth(DamageAmount);
+
+	return DamageAmount;
+}
+
+void ABaseZomboiCharacter::Die()
+{
+	//TODO: おまえわもうしんでいる。
 }
 

@@ -71,7 +71,7 @@ void AWeapon::Equip(ABaseZomboiCharacter* Char)
 
 		SkeletalMesh->SetSimulatePhysics(false);
 
-		const USkeletalMeshSocket* RightHandSocket = Char->GetMesh()->GetSocketByName("WeaponSocket"); //TODO: Change to actual socket name.
+		const USkeletalMeshSocket* RightHandSocket = Char->GetMesh()->GetSocketByName("IKHand_Gun_JNTSocket"); //TODO: Change to actual socket name.
 
 		if (RightHandSocket)
 		{
