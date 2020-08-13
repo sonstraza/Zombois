@@ -47,6 +47,9 @@ public:
 	class USoundCue* OnEquipSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sounds")
+	class USoundCue* OnUnequipSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sounds")
 	class USoundCue* DropSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Properties")

@@ -46,11 +46,14 @@ public:
 	bool AddItemToInventory(AItem* Item);
 
 	UFUNCTION(BlueprintCallable)
-	bool RemoveItemFromInventory(AItem* Item);
+	bool RemoveItemFromInventory(AItem* Item, bool bDropItem);
 
 	UFUNCTION(BlueprintCallable)
-	void ClearInventory();
+	void ClearInventory(bool bDropInventory);
 
 	UFUNCTION(BlueprintCallable)
 	bool EquipItem(AItem* Item, FName SocketName);
+
+	UFUNCTION(BlueprintCallable)
+	bool UnequipItem(AItem* Item);
 };

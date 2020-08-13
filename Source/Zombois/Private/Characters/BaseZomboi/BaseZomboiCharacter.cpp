@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "Characters/Components/InventorySystemComponent.h"
 
 // Sets default values
 ABaseZomboiCharacter::ABaseZomboiCharacter()
@@ -173,6 +174,31 @@ void ABaseZomboiCharacter::Turn(float Input)
 void ABaseZomboiCharacter::LookUp(float Input)
 {
 	AddControllerPitchInput(Input * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void ABaseZomboiCharacter::PickupItem()
+{
+	InventorySystem->AddItemToInventory(InventorySystem->ActiveOverlappingItem);
+}
+
+void ABaseZomboiCharacter::DropItem()
+{
+	//TODO: Either currently equipped item if inventory is closed. If inventory menu is opened, drop currently selected item.
+}
+
+void ABaseZomboiCharacter::EquipItem()
+{
+	//TODO: Long press of pick up input or if inventory is opened, currently selected item can be equpped.
+}
+
+void ABaseZomboiCharacter::UnequipItem()
+{
+	//TODO: When switched in hotbar, dropped currently equipped item, unequip item.
+}
+
+void ABaseZomboiCharacter::OpenInventory()
+{
+	//TODO: Open inventory menu.
 }
 
 void ABaseZomboiCharacter::DecrementHealth(float Amount)

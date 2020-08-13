@@ -41,16 +41,50 @@ void UInventorySystemComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 
 bool UInventorySystemComponent::AddItemToInventory(AItem* Item)
 {
-	return false;
+	if (Inventory.Contains(Item)) //Check if contains means by reference or by value.
+	{
+		return false;
+	}
+
+	//TODO: Copy Item, destroy spawned item, store copy.
+
+	Inventory.Add(Item);
+
+	return true;
 }
 
-bool UInventorySystemComponent::RemoveItemFromInventory(AItem* Item)
+bool UInventorySystemComponent::RemoveItemFromInventory(AItem* Item, bool bDropItem)
 {
-	return false;
+	if (!Inventory.Contains(Item))
+	{
+		return false;
+	}
+
+	if (!bDropItem)
+	{
+		Inventory.Remove(Item);
+	}
+	else
+	{
+		//TODO: Spawn copy of dropped Item then remove original from Inventory
+		Inventory.Remove(Item);
+	}
+
+	return true;
 }
 
-void UInventorySystemComponent::ClearInventory()
+void UInventorySystemComponent::ClearInventory(bool bDropInventory)
 {
+	if (!bDropInventory)
+	{
+		Inventory.Empty();
+	}
+	else
+	{
+		//TODO: Spawn items in some sort of package or as individual items and drop on ground in front of player
+		// Then empty Inventory.
+	}
+	
 }
 
 bool UInventorySystemComponent::EquipItem(AItem* Item, FName SocketName)
@@ -88,7 +122,7 @@ bool UInventorySystemComponent::EquipItem(AItem* Item, FName SocketName)
 
 			if (Item->OnEquipSound)
 			{
-				UGameplayStatics::PlaySound2D(Item, Item->OnEquipSound);
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), Item->OnEquipSound, Item->GetActorLocation());
 			}
 			if (Item->bIdleParticleActive)
 			{
@@ -98,6 +132,38 @@ bool UInventorySystemComponent::EquipItem(AItem* Item, FName SocketName)
 
 			return true;
 		}
+	}
+
+	return false;
+}
+
+bool UInventorySystemComponent::UnequipItem(AItem* Item)
+{
+	if (!Inventory.Contains(Item) || Item->CurrentItemState != EItemState::EIS_Equipped)
+	{
+		return false;
+	}
+
+	ACharacter* Char = Cast<ACharacter>(GetOwner());
+
+	if (Char)
+	{
+		Item->SetInstigator(nullptr);
+
+		//Setting skeletal mesh to no longer ignore collision with pawn and camera
+		Item->Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Block);
+		Item->Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+
+		Item->Mesh->SetSimulatePhysics(true);
+
+		Item->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+
+		if (Item->OnUnequipSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), Item->OnUnequipSound, Item->GetActorLocation());
+		}
+
+		return true;
 	}
 
 	return false;

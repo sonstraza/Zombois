@@ -30,6 +30,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Camera")
 	class UCameraComponent* FirstPersonCamera;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Inventory")
+	class UInventorySystemComponent* InventorySystem;
+
 	//Movement Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Properties")
 	float WalkSpeed;
@@ -112,6 +115,22 @@ public:
 	void Turn(float Input);
 
 	void LookUp(float Input);
+
+	//Item Functions
+	UFUNCTION(BlueprintCallable)
+	void PickupItem();
+
+	UFUNCTION(BlueprintCallable)
+	void DropItem();
+
+	UFUNCTION(BlueprintCallable)
+	void EquipItem();
+
+	UFUNCTION(BlueprintCallable)
+	void UnequipItem();
+
+	UFUNCTION(BlueprintCallable)
+	void OpenInventory();
 
 	//Status Functions
 	
