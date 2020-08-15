@@ -23,7 +23,10 @@ UInventorySystemComponent::UInventorySystemComponent()
 
 	// ...
 	DropItemLocation = CreateDefaultSubobject<USphereComponent>(TEXT("DropItemLocation"));
-	DropItemLocation->SetupAttachment(GetOwner()->GetRootComponent());
+	if (Char)
+	{
+		DropItemLocation->SetupAttachment(Char->GetRootComponent());
+	}
 }
 
 
