@@ -8,6 +8,16 @@
 
 class AItem;
 
+USTRUCT(BlueprintType)
+struct FItemStack
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
+	TArray<AItem*> StackedItems;
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ZOMBOIS_API UInventorySystemComponent : public UActorComponent
 {
@@ -16,6 +26,12 @@ class ZOMBOIS_API UInventorySystemComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UInventorySystemComponent();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
+	class USphereComponent* DropItemLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
+	class ACharacter* Char;
 
 	/**
 	 * \brief Pickupable item that is in the current vicinity of the player.
@@ -27,7 +43,7 @@ public:
 	AItem* EquippedItem;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Items)
-	TArray<AItem*> Inventory;
+	TMap<FName, FItemStack> Inventory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Items)
 	int InventoryMaxCapacity;

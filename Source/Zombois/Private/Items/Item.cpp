@@ -31,6 +31,10 @@ AItem::AItem()
 	RotationRate = 45.f;
 
 	CurrentItemState = EItemState::EIS_Pickup;
+	ItemID = TEXT("DefaultItem");
+	bCanStack = true;
+	MaxStackCapacity = 5; //Arbitrary default number. Subject to change.
+	bEquipable = false;
 }
 
 // Called when the game starts or when spawned

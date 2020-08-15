@@ -11,6 +11,9 @@ AWeapon::AWeapon()
 	MeleeCollision->SetupAttachment(GetRootComponent());
 
 	MeleeDamage = 25.f;
+
+	bCanStack = false;
+	bEquipable = true;
 }
 
 void AWeapon::BeginPlay()

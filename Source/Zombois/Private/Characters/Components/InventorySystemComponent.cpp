@@ -9,6 +9,8 @@
 #include "Sound/SoundCue.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/Actor.h"
 
 // Sets default values for this component's properties
 UInventorySystemComponent::UInventorySystemComponent()
@@ -17,7 +19,11 @@ UInventorySystemComponent::UInventorySystemComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	Char = Cast<ACharacter>(GetOwner());
+
 	// ...
+	DropItemLocation = CreateDefaultSubobject<USphereComponent>(TEXT("DropItemLocation"));
+	DropItemLocation->SetupAttachment(GetOwner()->GetRootComponent());
 }
 
 
@@ -41,33 +47,45 @@ void UInventorySystemComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 
 bool UInventorySystemComponent::AddItemToInventory(AItem* Item)
 {
-	if (Inventory.Contains(Item)) //Check if contains means by reference or by value.
+	//If the item already exists in our inventory and cannot be stacked then this fails to add another to the inventory.
+	if (Inventory.Contains(Item->ItemID) && (!Item->bCanStack || Inventory[Item->ItemID].StackedItems.Num() < Item->MaxStackCapacity))
 	{
 		return false;
 	}
+	else if (!Inventory.Contains(Item->ItemID))
+	{
+		TArray<AItem*> ItemsList;
+		ItemsList.Add(Item);
 
+		FItemStack Items;
+		Items.StackedItems = ItemsList;
+
+		Inventory.Add(Item->ItemID, Items);
+	}
+	else
+	{
+		Inventory[Item->ItemID].StackedItems.Add(Item);
+	}
 	//TODO: Copy Item, destroy spawned item, store copy.
-
-	Inventory.Add(Item);
 
 	return true;
 }
 
 bool UInventorySystemComponent::RemoveItemFromInventory(AItem* Item, bool bDropItem)
 {
-	if (!Inventory.Contains(Item))
+	if (!Inventory.Contains(Item->ItemID))
 	{
 		return false;
 	}
 
 	if (!bDropItem)
 	{
-		Inventory.Remove(Item);
+		Inventory[Item->ItemID].StackedItems.RemoveSingle(Item);
 	}
 	else
 	{
 		//TODO: Spawn copy of dropped Item then remove original from Inventory
-		Inventory.Remove(Item);
+		Inventory[Item->ItemID].StackedItems.RemoveSingle(Item);
 	}
 
 	return true;
@@ -83,20 +101,16 @@ void UInventorySystemComponent::ClearInventory(bool bDropInventory)
 	{
 		//TODO: Spawn items in some sort of package or as individual items and drop on ground in front of player
 		// Then empty Inventory.
+		Inventory.Empty();
 	}
 	
 }
 
 bool UInventorySystemComponent::EquipItem(AItem* Item, FName SocketName)
 {
-	if (!Inventory.Contains(Item) && ActiveOverlappingItem == Item)
-	{
-		AddItemToInventory(Item);
-	}
+	AddItemToInventory(Item);
 
-	ACharacter* Char = Cast<ACharacter>(GetOwner());
-
-	if (Char)
+	if (Char && Item->bEquipable)
 	{
 		Item->SetInstigator(Char->GetController());
 
@@ -139,12 +153,10 @@ bool UInventorySystemComponent::EquipItem(AItem* Item, FName SocketName)
 
 bool UInventorySystemComponent::UnequipItem(AItem* Item)
 {
-	if (!Inventory.Contains(Item) || Item->CurrentItemState != EItemState::EIS_Equipped)
+	if (!Inventory.Contains(Item->ItemID) || Item->CurrentItemState != EItemState::EIS_Equipped)
 	{
 		return false;
 	}
-
-	ACharacter* Char = Cast<ACharacter>(GetOwner());
 
 	if (Char)
 	{

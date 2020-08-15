@@ -64,6 +64,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Interaction")
 	EItemState CurrentItemState;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Interaction")
+	FName ItemID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Interaction")
+	bool bCanStack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Interaction")
+	bool bEquipable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Interaction")
+	int MaxStackCapacity;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
