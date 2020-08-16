@@ -26,4 +26,6 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Zombois,Zombies")
 	void SpawnZombie();
+
+	virtual void SpawnZombie_Implementation();
 };
