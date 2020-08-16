@@ -19,6 +19,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "ApexDestruction",
+			"Enabled": true
+		},
+		{
 			"Name": "Volumetrics",
 			"Enabled": true
 		}
